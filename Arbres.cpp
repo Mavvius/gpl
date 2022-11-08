@@ -4,21 +4,21 @@
 
 using namespace std;
 
-struct Arbres
+struct Arbre
 {
 	char* val ;
 
 // feuilles
-	Arbres* droit = nullptr;
-	Arbres*	gauche = nullptr;	
+	Arbre* droit = nullptr;
+	Arbre*	gauche = nullptr;	
 };
 
 
 // Genconc 																	 .	
-// Prend deux arbres, les connecte et signifie que c'est une concatenation  / \
+// Prend deux Arbre, les connecte et signifie que c'est une concatenation  / \
 
-Arbres* genconc(Arbres *gauche, Arbres *droit){ 
-	Arbres* C = new Arbres ;
+Arbre* genconc(Arbre *gauche, Arbre *droit){ 
+	Arbre* C = new Arbre ;
 	C->gauche = gauche;
 	C->droit = droit;
 	C->val = (char*) "conc";
@@ -27,10 +27,22 @@ Arbres* genconc(Arbres *gauche, Arbres *droit){
 }
 
 
+
+// GenUnion
+Arbre* genunion(Arbre *gauche, Arbre *droit){
+	Arbre* C = new Arbre ;
+	C->gauche = gauche;
+	C->droit = droit;
+	C->val = (char*)"Union";
+
+	return C;
+}
+
+
 // genstar									
 // Ne met qu'une branche                    
-Arbres* genstar(Arbres *gauche){
-	Arbres* C = new Arbres ;
+Arbre* genstar(Arbre *gauche){
+	Arbre* C = new Arbre ;
 	C->gauche = gauche;
 	C->droit = nullptr;
 	C->val = (char*)"*";
@@ -38,45 +50,105 @@ Arbres* genstar(Arbres *gauche){
 }
 
 
+
+// genstar									
+// Ne met qu'une branche                    
+Arbre* genUn(Arbre *gauche){
+	Arbre* C = new Arbre ;
+	C->gauche = gauche;
+	C->droit = nullptr;
+	C->val = (char*)"*";
+	return C;
+}
+
+
+
 //genleaf
-Arbres* genleaf(char* val){
-	Arbres* C = new Arbres ;
+Arbre* genleaf(char* val){
+	Arbre* C = new Arbre ;
 	C->val = (char*) val;
 	return C;
 }
 
 
+struct Atom
+{
+	char* atom;
+	int code;
+	bool ter_statut;
+};
+
 
 // Genatom
-/*Arbres* genatom((char*) type_atome, int code = 0, bool ter){
+Atom* genatom(char* genre_atome, int code = 0, bool ter = true){
+	Atom* atome = { genre_atome, code, ter};
+	return *atome;
+}
+
+	// if(ter){
+	// 	Arbre->val = "Terminal";
+	// }else {Arbre->val = "Non-Terminal";}
+
+
+
+void printTree(Arbre *a){ // Print Arbre en infixe
+	if (a != nullptr){
+		printTree(a->gauche);
+		cout << a->val << ";"; 
+		printTree(a->droit);
+	}
+};
+
+int main(int argc, char const *argv[])
+{
+	/*
+	int Tableau[10] = {1,112,32,24,15,76,97,28,9};	// Il n'y a que 9 valeurs. La valeur manquante est initialisée a 0 
+
+	auto a1 = genleaf("lapin");
+	auto a2 = genleaf("mangouste");
 	
-	if(ter){
-		arbres->val = "Terminal";
-	}else {arbres->val = "Non-Terminal";}
+	auto col = genconc(a1, a2);
+
+	assert(col->gauche == a1);
+	assert(col->droit == a2);
+
+	printTree(col);*/
+
+   // Initialize array of pointer
+    const char* colour[4] = { "Blue", "Red", "Orange", "Yellow" };
+ 
+    // Printing Strings stored in 2D array
+    for (int i = 0; i < 4; i++)
+        std::cout << colour[i] << "\n";
+ 
+	Atom noyau{(char*)"lapin", 8, true}; 
+	cout << noyau.atom;
+
+    return 0;
 }
-// Genunion 
-Arbres* genunion(Arbres *gauche, Arbres *droit){
-
-}
 
 
-// GenUn
-Arbres* genUn(Arbres *gauche){
+	/*Arbre* rac = new Arbre;
+	genconc(rac->gauche, rac->droit);
 
-}*/
+	printTree(rac);
+	*///return 0;
 
-/*Arbres* genunion(Arbres *gauche, Arbres *droit){
-	Arbres* C = new Arbres ;
-	C->gauche = gauche;
-	C->droit = droit;
-	C->val = "conc";
 
-	return C;
-}*/
+		//cout << "Hello\n";
+/*
+	Arbre *ent =nullptr ; // on initialise l'Arbre
+	for(const auto &val:Tableau){
+		cout << val << " ;";
+	}*/
+/*	for(const auto &val:Tableau){ //pour chaques valeurs dans tableau
+		insertBranch(ent, val);
+	}*/
+//	printTree(ent);
 
-/*void insertBranch(Arbres* &racine, const char* v){ // pourquoi un arbres* &racine ?
+/*void insertBranch(Arbre* &racine, const char* v){ // pourquoi un Arbre* &racine ?
 	if (racine == nullptr){
-		racine= new Arbres;
+		racine= new Arbre;
 		racine->val = v;
 		racine->gauche = nullptr;
 		racine->droit = nullptr;
@@ -91,44 +163,3 @@ Arbres* genUn(Arbres *gauche){
 
 	}
 }*/
-void printTree(Arbres *a){ // Print arbres en infixe
-	if (a != nullptr){
-		printTree(a->gauche);
-		cout << a->val << ";"; 
-		printTree(a->droit);
-	}
-};
-
-int main(int argc, char const *argv[])
-{
-	
-	int Tableau[10] = {1,112,32,24,15,76,97,28,9};	// Il n'y a que 9 valeurs. La valeur manquante est initialisée a 0 
-
-	auto a1 = genleaf("lapin");
-	auto a2 = genleaf("mangouste");
-	
-	auto col = genconc(a1, a2);
-
-	assert(col->gauche == a1);
-	assert(col->droit == a2);
-
-	printTree(col);
-
-	/*Arbres* rac = new Arbres;
-	genconc(rac->gauche, rac->droit);
-
-	printTree(rac);
-	*///return 0;
-
-
-		//cout << "Hello\n";
-/*
-	Arbres *ent =nullptr ; // on initialise l'arbres
-	for(const auto &val:Tableau){
-		cout << val << " ;";
-	}*/
-/*	for(const auto &val:Tableau){ //pour chaques valeurs dans tableau
-		insertBranch(ent, val);
-	}*/
-//	printTree(ent);
-}
