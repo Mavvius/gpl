@@ -1,4 +1,4 @@
-// Rassembler toutes les fonction d'arbres
+// Rassembler toutes les fonction d'Arbre
 
 
 struct Noeud

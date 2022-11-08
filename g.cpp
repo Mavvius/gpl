@@ -4,31 +4,31 @@
 
 using namespace std;
 
-struct Arbres
+struct Arbre
 {
     char* val ;
 // feuilles
-    Arbres* droit = nullptr;
-    Arbres* gauche = nullptr;    
+    Arbre* droit = nullptr;
+    Arbre* gauche = nullptr;    
 };
 
 /*
-struct Arbres_v
+struct Arbre_v
 {
     string val ;
 // feuilles
-    Arbres_v droit = nullptr;
-    Arbres_v gauche = nullptr;    
+    Arbre_v droit = nullptr;
+    Arbre_v gauche = nullptr;    
 };
 */
 
 
 // Genconc 
-Arbres* genconc(Arbres *gauche, Arbres *droit){
+Arbre* genconc(Arbre *gauche, Arbre *droit){
     assert(gauche != nullptr);
 	assert(droit != nullptr);
 	
-	Arbres* C = new Arbres ;
+	Arbre* C = new Arbre ;
     C->gauche = gauche;
     C->droit = droit;
     C->val = (char*) "conc";
@@ -37,15 +37,15 @@ Arbres* genconc(Arbres *gauche, Arbres *droit){
 }
 // Retirer les majuscule et les pluriels
 //genleaf
-Arbres* genleaf(char* val){
-	Arbres* C = new Arbres ;
+Arbre* genleaf(char* val){
+	Arbre* C = new Arbre ;
 	C->val = (char*) val;
 	return C;
 }
 
 // genstar
-Arbres* genstar(Arbres *gauche){
-    Arbres* C = new Arbres ;
+Arbre* genstar(Arbre *gauche){
+    Arbre* C = new Arbre ;
     C->gauche = gauche;
     C->droit = nullptr;
     C->val = (char*)"*";
@@ -53,7 +53,7 @@ Arbres* genstar(Arbres *gauche){
 	}
 
 // printtree
-void printTree(Arbres *a){
+void printTree(Arbre *a){
 	if (a!=nullptr){
 		printTree(a->gauche);
 		cout << a->val; 
