@@ -2,7 +2,7 @@
 #include <cstring> // to use strings if necessary
 #include <cassert> // to test bits of codes with assertions
 #include <typeinfo> // To check the type of the variables
-
+#include <variant>
 using namespace std;
 
 struct Atom
@@ -10,6 +10,7 @@ struct Atom
 	char* atom;
 	int code;
 	bool ter_statut;
+	Atom(char* atom, int code, bool ter_statut) : atom(atom), code(code), ter_statut(ter_statut) {};
 };
 
 
@@ -19,9 +20,18 @@ struct Arbre
 
 // feuilles
 	Arbre* droit = nullptr;
-	Arbre* gauche = nullptr;
-	Atom* gauche = nullptr;	
+	Arbre* gauche = nullptr;	
 };
+
+
+
+// struct Tree
+// {
+// 	char* val ;
+// // feuilles
+// 	std::variant<Arbre*, Atom*> droit = nullptr;
+// 	std::variant<Arbre*, Atom*> gauche = nullptr;	
+// };
 
 
 // Genconc 																	 .	
@@ -36,6 +46,17 @@ struct Arbre
 	return C;
 }
 */
+/*
+template<typename T1, typename T2>
+Arbre* genconc(T1* gauche, T2* droit){ 
+	Arbre* C = new Arbre ;
+	C->gauche = gauche;
+	C->droit = droit;
+	C->val = (char*) "conc";
+
+	return C;
+}*/
+
 template<typename T1, typename T2>
 Arbre* genconc(T1* gauche, T2* droit){ 
 	Arbre* C = new Arbre ;
@@ -45,8 +66,6 @@ Arbre* genconc(T1* gauche, T2* droit){
 
 	return C;
 }
-
-
 
 // GenUnion
 Arbre* genunion(Arbre* gauche, Arbre* droit){
@@ -95,8 +114,7 @@ Arbre* genleaf(char* val){
 
 // Genatom
 Atom* genatom(char* genre_atome, int code = 0, bool ter = true){
-	Atom* atome = new Atom;
-	*atome = {(char*) genre_atome, code, ter};
+	Atom* atome = new Atom((char*) genre_atome, code, ter);
 	return atome;
 }
 
@@ -105,14 +123,14 @@ Atom* genatom(char* genre_atome, int code = 0, bool ter = true){
 	// }else {Arbre->val = "Non-Terminal";}
 
 
-
-void printTree(Arbre *a){ // Print Arbre en infixe
+/*
+void printTree(Tree* a){ // Print Arbre en infixe
 	if (a != nullptr){
 		printTree(a->gauche);
 		cout << a->val << "\t"; 
 		printTree(a->droit);
 	}
-};
+};*/
 
 int main(int argc, char const *argv[])
 {
@@ -122,7 +140,7 @@ int main(int argc, char const *argv[])
 	auto a1 = genleaf((char*)"lapin");
 	auto a2 = genleaf((char*)"mangouste");
 	
-	auto noyau = genatom((char*)"lapin", 8, true); 
+	Atom* noyau = new Atom((char*)"lapin", 8, true); 
 
 
 	auto col = genconc(a1, a2);
@@ -130,7 +148,7 @@ int main(int argc, char const *argv[])
 	//assert(col->gauche == a1);
 	//assert(col->droit == a2);
 
-	printTree(col);
+	//printTree(col);
 
    // Initialize array of pointer
     const char* colour[4] = { "Blue", "Red", "Orange", "Yellow" };
