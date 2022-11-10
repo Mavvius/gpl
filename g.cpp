@@ -131,3 +131,11 @@ Arbre* genconc(T1* gauche, T2* droit){
 // 	C->val = (char*)"*";
 // 	return C;
 // }
+// struct Arbre
+// {
+// 	char* val ;
+
+// // feuilles
+// 	Arbre* droit = nullptr;
+// 	Arbre* gauche = nullptr;	
+// };

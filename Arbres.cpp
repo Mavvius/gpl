@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstring> // to use strings if necessary
+#include <string> // to use strings if necessary
 #include <cassert> // to test bits of codes with assertions
 #include <typeinfo> // To check the type of the variables
 #include <variant>
@@ -10,20 +10,10 @@ struct Atom // Les feuilles
 {
 	char atom;
 	int code = int(atom); // Le code ascii du symbole atom. // Pas sur que ca serve
-	//int action;
 	bool ter_statut;
+	string terminal;
 	Atom(char atom, bool ter_statut) : atom(atom), ter_statut(ter_statut) {};
 };
-
-
-// struct Arbre
-// {
-// 	char* val ;
-
-// // feuilles
-// 	Arbre* droit = nullptr;
-// 	Arbre* gauche = nullptr;	
-// };
 
 struct Arbre
 {
@@ -80,6 +70,16 @@ Arbre* genUn(Arbre* left){
 	return C;
 }
 
+// Gen atom
+// initialise l'atom au besoin 
+Atom* genAtom(char symbol, bool ter_or_not){
+	Atom* A = new Atom(symbol, ter_or_not);
+	if(ter_or_not){
+		A->terminal = "ELTER";
+	} else { A->terminal = "IDNTER"; }
+
+	return A;
+}
 
 // //genleaf
 // Arbre* genleaf(char* val){
@@ -108,7 +108,11 @@ int main(int argc, char const *argv[])
 	Atom* noyau = new Atom('E',true); 
 	cout << noyau->atom << "--" << noyau->code << "--" << noyau->ter_statut << endl ;
 	cout << int(c);
+	string chaine= "bliblou";
+	cout << chaine <<"\n";
 
+	auto a = genAtom('S', true);
+	cout << a->code <<"-----" << a->terminal;
 // 	// auto col = genconc(a1, a2);
 
 // 	//assert(col->gauche == a1);
