@@ -78,4 +78,56 @@ int main()
 }
 
 
+/* Boulevard of Broken Dreams
+// Genconc 																	 .	
 
+
+/*Arbre* genconc(Arbre* gauche, Arbre* droit){ 
+	Arbre* C = new Arbre ;
+	C->gauche = gauche;
+	C->droit = droit;
+	C->val = (char*) "conc";
+
+	return C;
+}
+*/
+/*
+template<typename T1, typename T2>
+Arbre* genconc(T1* gauche, T2* droit){ 
+	Arbre* C = new Arbre ;
+	C->gauche = gauche;
+	C->droit = droit;
+	C->val = (char*) "conc";
+
+	return C;
+}*/
+
+// template<typename T1, typename T2>
+// Arbre* genconc(T1* gauche, T2* droit){ 
+// 	Arbre* C = new Arbre ;
+// 	C->gauche = gauche;
+// 	C->droit = droit;
+// 	C->val = (char*) "conc";
+
+// 	return C;
+// } */
+
+// // GenUnion
+// Arbre* genunion(Arbre* gauche, Arbre* droit){
+// 	Arbre* C = new Arbre ;
+// 	C->gauche = gauche;
+// 	C->droit = droit;
+// 	C->val = (char*)"Union";
+
+// 	return C;
+// }
+
+// // genstar									
+// // Ne met qu'une branche                    
+// Arbre* genUn(Arbre *gauche){
+// 	Arbre* C = new Arbre ;
+// 	C->gauche = gauche;
+// 	C->droit = nullptr;
+// 	C->val = (char*)"*";
+// 	return C;
+// }
