@@ -20,8 +20,8 @@ struct Arbre
     std::variant<Arbre*, Atom*> left;
     std::variant<Arbre*, Atom*> right;
 
-    char* value;
-    Arbre(char* value) : value(value) {};
+    string value;
+    Arbre(string value) : value(value) {};
 };
 
 //------------------ Les Fonctions ------------------//
@@ -54,7 +54,7 @@ Arbre* genUnion(Left* left, Right* right)
 // Gen Star									
 // Ne met qu'une branche équivalent de l'étoile. Signifie 0 ou plusieurs                
 Arbre* genStar(Arbre* left){
-	Arbre* C = new Arbre((char*)"*") ;
+	Arbre* C = new Arbre((string)"*") ;
 	C->left = left;
 //	Arbre* C->right = nullptr;
 	return C;
@@ -64,7 +64,7 @@ Arbre* genStar(Arbre* left){
 // Gen Un									
 // Ne met qu'une branche équivalent de l'étoile. Signifie 0 ou plusieurs                
 Arbre* genUn(Arbre* left){
-	Arbre* C = new Arbre((char*)"Un") ;
+	Arbre* C = new Arbre((string)"Un") ;
 	C->left = left;
 //	Arbre* C->right = nullptr;
 	return C;
@@ -84,7 +84,7 @@ Atom* genAtom(string symbol, bool ter_or_not){
 
 //------------------ L'affichage ------------------//
 
-
+// Spécifique pour afficher les feuilles
 void display(std::string bidule, Atom* l, bool gauche)
 {
     if (l != nullptr) {
@@ -92,19 +92,22 @@ void display(std::string bidule, Atom* l, bool gauche)
 
         std::cout << (gauche ? "├──" : "└──" ); // ? est l'equivalent d'un if else. 
 
-        std::cout << l->atom << " " <<  l->terminal << " " << "\t" <<std::endl;
+        //std::cout << l->atom << " " <<  l->terminal << " " << "\t" <<"\n";
+    	std::cout << l->atom << "\n";
     }
 }
 
+// Pour afficher les Arbres
 void display(std::string truc, Arbre* t, bool gauche)
 {
     if (t != nullptr) {
         std::cout << truc;
 
-        std::cout << (gauche ? "├──" : "└──" ); // ? est l'equivalent d'un if else. 
+        std::cout << (gauche ? "├──" : "└──" ); // "?" est l'equivalent d'un if else. 
 
-        std::cout << t->value << "\t" <<std::endl;
+        std::cout << t->value << "\t\n";
 
+// Le lancement change selon le type Atom ou Arbre mais la procedure est la même
         if (auto* ptree = std::get_if<Arbre*>(&t->left)) {
             //std::cout << t->value + ("│   ");
             display(truc + (gauche ? "│   " : "\t"),*ptree, true);
@@ -124,6 +127,7 @@ void display(std::string truc, Arbre* t, bool gauche)
     }
 }
 
+// Pour lancer la fonction a la racine
 void display(Arbre* node)
 {
     display("", node, false);    
@@ -157,12 +161,12 @@ int main(int argc, char const *argv[])
 
 	auto* rule1 = genconc(genStar(genconc(genconc(genAtom("N", false), genAtom("->", true)), genAtom("E", false))), genAtom(";", true)); 
 	auto* rule2 = genAtom("IDNTER", true);
-	auto* rule3 = genconc(genAtom("T", false), genStar(genconc(genAtom("+", true), genAtom("T", false))));
-	auto* rule4 = genconc(genStar(genconc(genAtom(".", true), genAtom("F", false))), genAtom("T", false));
+	auto* rule3 = genconc(genAtom("T", false), genStar(genconc(genAtom("\"+\"", true), genAtom("T", false))));
+	auto* rule4 = genconc(genAtom("T", false), genStar(genconc(genAtom("\".\"", true), genAtom("F", false))));
 	auto* rule5 = genUnion(
 					genUnion(
 						genUnion(
-							genUnion(genAtom("IDNTER", true), genAtom("ELTER", true)), 
+							genUnion(genAtom("\"IDNTER\"", true), genAtom("\"ELTER\"", true)), 
 								genconc(genconc(genAtom("(", true), genAtom("E", false)), genAtom(")", true))), 
 									genconc(genconc(genAtom("[", true), genAtom("E", false)), genAtom("]", true))
 										), genconc(genconc(genAtom("(/", true), genAtom("E", false)), genAtom("/)", true)));
