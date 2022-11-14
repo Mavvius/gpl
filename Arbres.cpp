@@ -8,11 +8,11 @@ using namespace std;
 //------------------ Les Différentes structures pour les arbres et les feuilles ------------------//
 struct Atom // Les feuilles 
 {
-	char atom;
-	int code = int(atom); // Le code ascii du symbole atom. // Pas sur que ca serve
+	string atom;
+	//int code = int(atom); // Le code ascii du symbole atom. // Pas sur que ca serve
 	bool ter_statut;
 	string terminal;
-	Atom(char atom, bool ter_statut) : atom(atom), ter_statut(ter_statut) {};
+	Atom(string atom, bool ter_statut) : atom(atom), ter_statut(ter_statut) {};
 };
 
 struct Arbre
@@ -42,7 +42,7 @@ Arbre* genconc(Left* left, Right* right)
 // Gen Union
 // Equivalent du "+" signifie le ou inclusif. 
 template <typename Left, typename Right>
-Arbre* genUion(Left* left, Right* right)
+Arbre* genUnion(Left* left, Right* right)
 {
     auto t = new Arbre("Union");
     t->left = left;
@@ -72,7 +72,7 @@ Arbre* genUn(Arbre* left){
 
 // Gen atom
 // initialise l'atom au besoin 
-Atom* genAtom(char symbol, bool ter_or_not){
+Atom* genAtom(string symbol, bool ter_or_not){
 	Atom* A = new Atom(symbol, ter_or_not);
 	if(ter_or_not){
 		A->terminal = "ELTER";
@@ -81,21 +81,62 @@ Atom* genAtom(char symbol, bool ter_or_not){
 	return A;
 }
 
-// //genleaf
-// Arbre* genleaf(char* val){
-// 	Arbre* C = new Arbre ;
-// 	C->val = (char*) val;
-// 	return C;
-// }
 
-/*
-void printTree(Tree* a){ // Print Arbre en infixe
-	if (a != nullptr){
-		printTree(a->gauche);
-		cout << a->val << "\t"; 
-		printTree(a->droit);
-	}
-};*/
+//------------------ L'affichage ------------------//
+
+
+void display(std::string bidule, Atom* l, bool gauche)
+{
+    if (l != nullptr) {
+        std::cout << bidule;
+
+        std::cout << (gauche ? "├──" : "└──" ); // ? est l'equivalent d'un if else. 
+
+        std::cout << l->atom << " " <<  l->terminal << " " << "\t" <<std::endl;
+    }
+}
+
+void display(std::string truc, Arbre* t, bool gauche)
+{
+    if (t != nullptr) {
+        std::cout << truc;
+
+        std::cout << (gauche ? "├──" : "└──" ); // ? est l'equivalent d'un if else. 
+
+        std::cout << t->value << "\t" <<std::endl;
+
+        if (auto* ptree = std::get_if<Arbre*>(&t->left)) {
+            //std::cout << t->value + ("│   ");
+            display(truc + (gauche ? "│   " : "\t"),*ptree, true);
+        } else if (auto* pleaf = std::get_if<Atom*>(&t->left)) {
+            //std::cout << t->value + ("│   ");
+            display(truc + (gauche ? "│   " : "\t"),*pleaf, true);
+        }
+
+        if (auto* ptree = std::get_if<Arbre*>(&t->right)) {
+            //std::cout << t->value + ("\t");
+            display(truc + (gauche ? "│   " : "\t"),*ptree, false);
+        
+        } else if (auto* pleaf = std::get_if<Atom*>(&t->right)) {
+            //std::cout << t->value + ("\t");
+            display(truc + (gauche ? "│   " : "\t") ,*pleaf, false);
+        }
+    }
+}
+
+void display(Arbre* node)
+{
+    display("", node, false);    
+}
+
+
+
+
+
+
+// ##########################################################################
+/**/
+
 
 int main(int argc, char const *argv[])
 {
@@ -105,14 +146,41 @@ int main(int argc, char const *argv[])
 	// auto a1 = genleaf((char*)"lapin");
 	// auto a2 = genleaf((char*)"mangouste");
 	char c = '*';
-	Atom* noyau = new Atom('E',true); 
-	cout << noyau->atom << "--" << noyau->code << "--" << noyau->ter_statut << endl ;
+	Atom* noyau = new Atom("E",true); 
+	cout << noyau->atom << "--"<< noyau->ter_statut << endl ;
 	cout << int(c);
 	string chaine= "bliblou";
 	cout << chaine <<"\n";
 
-	auto a = genAtom('S', true);
-	cout << a->code <<"-----" << a->terminal;
+	auto a = genAtom("S", true);
+	cout << a->atom <<"-----" << a->terminal << "\n\n";
+
+	auto* rule1 = genconc(genStar(genconc(genconc(genAtom("N", false), genAtom("->", true)), genAtom("E", false))), genAtom(";", true)); 
+	auto* rule2 = genAtom("IDNTER", true);
+	auto* rule3 = genconc(genAtom("T", false), genStar(genconc(genAtom("+", true), genAtom("T", false))));
+	auto* rule4 = genconc(genStar(genconc(genAtom(".", true), genAtom("F", false))), genAtom("T", false));
+	auto* rule5 = genUnion(
+					genUnion(
+						genUnion(
+							genUnion(genAtom("IDNTER", true), genAtom("ELTER", true)), 
+								genconc(genconc(genAtom("(", true), genAtom("E", false)), genAtom(")", true))), 
+									genconc(genconc(genAtom("[", true), genAtom("E", false)), genAtom("]", true))
+										), genconc(genconc(genAtom("(/", true), genAtom("E", false)), genAtom("/)", true)));
+
+
+	cout << "-- RULE 1 -- \n";
+	display(rule1);
+	cout << "\n-- RULE 2 -- \n";
+	display("", rule2, false);
+	cout << "\n-- RULE 3 -- \n";
+	display(rule3);
+	cout << "\n-- RULE 4 -- \n";
+	display(rule4);
+	cout << "\n-- RULE 5 -- \n";
+	display(rule5);
+
+
+
 // 	// auto col = genconc(a1, a2);
 
 // 	//assert(col->gauche == a1);
@@ -184,3 +252,125 @@ int main(int argc, char const *argv[])
 
 	}
 }*/
+
+
+
+/*
+
+void display(Leaf* l, bool gauche)
+{
+    if (l != nullptr) {
+        std::cout << l->value << (gauche ? "│   " : "\t");
+    }
+}
+
+void display(std::string truc, Tree* t, bool gauche)
+{
+    truc = t->value;
+    if (t != nullptr) {
+     //   std::cout << t->value;
+
+        std::cout << (gauche ? "├──" : "└──" ); // ? est l'equivalent d'un if else. 
+
+        std::cout << t->value << std::endl;
+
+        if (auto* ptree = std::get_if<Tree*>(&t->left)) {
+            //std::cout << t->value + ("│   ");
+            display(truc + (gauche ? "│   " : "\t"),*ptree, true);
+        } else if (auto* pleaf = std::get_if<Leaf*>(&t->left)) {
+            //std::cout << t->value + ("│   ");
+            display(*pleaf, true);
+        }
+
+        if (auto* ptree = std::get_if<Tree*>(&t->right)) {
+            //std::cout << t->value + ("\t");
+            display(truc + (gauche ? "│   " : "\t"),*ptree, false);
+        
+        } else if (auto* pleaf = std::get_if<Leaf*>(&t->right)) {
+            //std::cout << t->value + ("\t");
+            display(*pleaf, false);
+        }
+    }
+}
+*/
+
+
+
+
+// //genleaf
+// Arbre* genleaf(char* val){
+// 	Arbre* C = new Arbre ;
+// 	C->val = (char*) val;
+// 	return C;
+// }
+
+/*
+void printTree(Tree* a){ // Print Arbre en infixe
+	if (a != nullptr){
+		printTree(a->gauche);
+		cout << a->val << "\t"; 
+		printTree(a->droit);
+	}
+};*/
+
+
+
+
+
+/*void displayArbre(const std::string& prefix, const Arbre* node, bool isLeft)
+{	
+	if( node != nullptr )
+    {
+        std::cout << prefix;
+
+        std::cout << (isLeft ? "├──" : "└──" ); // ? est l'equivalent d'un if else. 
+
+        // print the value of the node
+        std::cout << node->value << std::endl;
+
+        // enter the next tree level - left and right branch
+       	displayArbre( prefix + (isLeft ? "│   " : "\t"), node->left, true);
+       	displayArbre( prefix + (isLeft ? "│   " : "\t"), node->right, false);
+ 
+	}
+}
+
+void displayArbre(const Arbre* node)
+{
+    displayArbre("", node, false);    
+}
+
+void displayArbre(Atom* l)
+{
+    if (l != nullptr) {
+        std::cout << "Leaf: " << l->value;
+    }
+}
+
+*/
+
+
+/*void display(Leaf* l)
+{
+    if (l != nullptr) {
+        std::cout << "Leaf: " << l->value << "\n";
+    }
+}
+
+void display(Tree* t)
+{
+    if (t != nullptr) {
+        if (auto* ptree = std::get_if<Tree*>(&t->left)) {
+            display(*ptree);
+        } else if (auto* pleaf = std::get_if<Leaf*>(&t->left)) {
+            display(*pleaf);
+        }
+        std::cout << "Tree: " << t->value << "\n";
+        if (auto* ptree = std::get_if<Tree*>(&t->right)) {
+            display(*ptree);
+        } else if (auto* pleaf = std::get_if<Leaf*>(&t->right)) {
+            display(*pleaf);
+        }
+    }
+}
+*/
