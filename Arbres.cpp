@@ -3,6 +3,7 @@
 #include <cassert> // to test bits of codes with assertions
 #include <typeinfo> // To check the type of the variables
 #include <variant>
+#include <vector>
 using namespace std;
 
 //------------------ Les Différentes structures pour les arbres et les feuilles ------------------//
@@ -23,6 +24,12 @@ struct Arbre
     string value;
     Arbre(string value) : value(value) {};
 };
+
+struct tab_arbre
+{
+	std::variant<Arbre*, Atom*> tab;
+};
+
 
 //------------------ Les Fonctions ------------------//
 
@@ -85,10 +92,10 @@ Atom* genAtom(string symbol, bool ter_or_not){
 //------------------ L'affichage ------------------//
 
 // Spécifique pour afficher les feuilles
-void display(std::string bidule, Atom* l, bool gauche)
+void display(std::string symbols, Atom* l, bool gauche)
 {
     if (l != nullptr) {
-        std::cout << bidule;
+        std::cout << symbols;
 
         std::cout << (gauche ? "├──" : "└──" ); // ? est l'equivalent d'un if else. 
 
@@ -98,37 +105,39 @@ void display(std::string bidule, Atom* l, bool gauche)
 }
 
 // Pour afficher les Arbres
-void display(std::string truc, Arbre* t, bool gauche)
+void display(std::string symbols, Arbre* t, bool gauche)
 {
     if (t != nullptr) {
-        std::cout << truc;
+        std::cout << symbols; // chaine vide pour avoir la profondeur
 
-        std::cout << (gauche ? "├──" : "└──" ); // "?" est l'equivalent d'un if else. 
+        std::cout << (gauche ? "├──" : "└──" ); // "?" est l'equivalent d'un if else. (si gauche : sinon )
 
         std::cout << t->value << "\t\n";
 
 // Le lancement change selon le type Atom ou Arbre mais la procedure est la même
         if (auto* ptree = std::get_if<Arbre*>(&t->left)) {
             //std::cout << t->value + ("│   ");
-            display(truc + (gauche ? "│   " : "\t"),*ptree, true);
+            display(symbols + (gauche ? "│   " : "\t"),*ptree, true);
         } else if (auto* pleaf = std::get_if<Atom*>(&t->left)) {
             //std::cout << t->value + ("│   ");
-            display(truc + (gauche ? "│   " : "\t"),*pleaf, true);
+            display(symbols + (gauche ? "│   " : "\t"),*pleaf, true);
         }
 
         if (auto* ptree = std::get_if<Arbre*>(&t->right)) {
             //std::cout << t->value + ("\t");
-            display(truc + (gauche ? "│   " : "\t"),*ptree, false);
+            display(symbols + (gauche ? "│   " : "\t"),*ptree, false);
         
         } else if (auto* pleaf = std::get_if<Atom*>(&t->right)) {
             //std::cout << t->value + ("\t");
-            display(truc + (gauche ? "│   " : "\t") ,*pleaf, false);
+            display(symbols + (gauche ? "│   " : "\t") ,*pleaf, false);
         }
     }
 }
 
 // Pour lancer la fonction a la racine
-void display(Arbre* node)
+// Template pour pouvoir lancer la Rule 2 qui n'est pas un arbre, juste un Atom
+template <typename R>
+void display(R* node)
 {
     display("", node, false);    
 }
@@ -144,20 +153,6 @@ void display(Arbre* node)
 
 int main(int argc, char const *argv[])
 {
-	
-	int Tableau[10] = {1,112,32,24,15,76,97,28,9};	// Il n'y a que 9 valeurs. La valeur manquante est initialisée a 0 
-
-	// auto a1 = genleaf((char*)"lapin");
-	// auto a2 = genleaf((char*)"mangouste");
-	char c = '*';
-	Atom* noyau = new Atom("E",true); 
-	cout << noyau->atom << "--"<< noyau->ter_statut << endl ;
-	cout << int(c);
-	string chaine= "bliblou";
-	cout << chaine <<"\n";
-
-	auto a = genAtom("S", true);
-	cout << a->atom <<"-----" << a->terminal << "\n\n";
 
 	auto* rule1 = genconc(genStar(genconc(genconc(genAtom("N", false), genAtom("->", true)), genAtom("E", false))), genAtom(";", true)); 
 	auto* rule2 = genAtom("IDNTER", true);
@@ -172,17 +167,41 @@ int main(int argc, char const *argv[])
 										), genconc(genconc(genAtom("(/", true), genAtom("E", false)), genAtom("/)", true)));
 
 
-	cout << "-- RULE 1 -- \n";
+	
+
+	std::vector<std::vector<variant<Arbre*, Atom*>>> grammar {{rule1},{ rule2}, {rule3}, {rule4}, {rule5}};
+
+	std::vector<std::vector<int>> v {{1,3,4},{2,5,6},{5,7,8}};
+
+	int r = 1;
+	for (auto i : grammar) {
+		
+		for(auto j : i){
+		
+			cout << "\n-- RULE " << r << "-- \n";
+			if (auto* rtree = std::get_if<Arbre*>(&j)){
+				display(*rtree) ;
+			} else if (auto* ratom = std::get_if<Atom*>(&j)){
+				display(*ratom) ;
+			}
+		
+		r = r+1;					
+		}
+
+
+	}
+
+/*	cout << "-- RULE 1 -- \n";
 	display(rule1);
-	cout << "\n-- RULE 2 -- \n";
-	display("", rule2, false);
+*//*	cout << "\n-- RULE 2 -- \n" << typeid(rule2).name() << "\n";
+	display(rule2);
 	cout << "\n-- RULE 3 -- \n";
 	display(rule3);
 	cout << "\n-- RULE 4 -- \n";
 	display(rule4);
 	cout << "\n-- RULE 5 -- \n";
 	display(rule5);
-
+*/
 
 
 // 	// auto col = genconc(a1, a2);
